@@ -7,13 +7,21 @@ namespace monogameShooter
     internal class Player
     {
         public Sprite sprite;
-        public Rectangle rect;
         public int speed;
+        public Rectangle rect
+        {
+            get
+            { 
+    /* Getter that returns a rectangle using sprite position and 64, 64
+       If im not mistaken, 
+        !!!   its basically a function called whenever this.rect is referenced. so it returns a new rect*/
+                return new Rectangle((int)sprite.position.X, (int)sprite.position.Y, 64, 64);
+            }
+        }
 
         public Player(Texture2D texture, Vector2 position)
         {
             this.sprite = new Sprite(position, texture);
-            this.rect = new Rectangle((int)position.X, (int)position.Y, 64, 64);
             this.speed = 10;
         }
 
@@ -35,8 +43,8 @@ namespace monogameShooter
             Rectangle nextRect = new Rectangle((int)this.rect.X + (int)velocity.X, (int)this.rect.Y + (int)velocity.Y,
                                                 this.rect.Width, this.rect.Height);
 
-            if (nextRect.Left >= 0 && nextRect.Right <= 1280) this.rect.X = nextRect.X;
-            if (nextRect.Top >= 0 && nextRect.Bottom <= 720) this.rect.Y = nextRect.Y;
+            if (nextRect.Left >= 0 && nextRect.Right <= 1280) this.sprite.position.X = nextRect.X;
+            if (nextRect.Top >= 0 && nextRect.Bottom <= 720) this.sprite.position.Y = nextRect.Y;
         }
 
         public void draw(SpriteBatch spriteBatch)
