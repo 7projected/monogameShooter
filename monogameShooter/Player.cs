@@ -1,12 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Diagnostics;
 
 namespace monogameShooter
 {
     internal class Player
     {
+        public event Action? PlayerDied;
         private bool dashPressed = false;
         private int maxDashFrame = 5;
         private int currentDashFrame = 0;
@@ -35,7 +37,7 @@ namespace monogameShooter
         public Player(Texture2D texture, Vector2 position, int health, int maxIFrames)
         {
             this.sprite = new Sprite(position, texture);
-            this.speed = 5;
+            this.speed = 7;
             this.health = health;
             this.maxHealth = health;
             this.maxIFrames = maxIFrames;
@@ -114,6 +116,7 @@ namespace monogameShooter
         {
             if (this.health <= 0)
             {
+                PlayerDied?.Invoke();
             }
         }
     }

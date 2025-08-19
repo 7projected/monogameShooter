@@ -60,7 +60,7 @@ namespace monogameShooter
     internal class BallSpawner
     {
         private Random rng = new Random();
-        private int ballsAlive;
+        public int ballsAlive;
         public List<Ball> ballList = new List<Ball>();
         public event Action<Player>? CollidedWithPlayer;
 

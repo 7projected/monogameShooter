@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 
 /* TODO:
  * Player collision with balls
@@ -17,12 +18,17 @@ namespace monogameShooter
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-
+        private SpriteFont font;
+        private bool dead = false;
+        
         Texture2D ballTexture;
         BallSpawner ballSpawner;
         GUI gui;
         Player player;
         Floor floor;
+        GameManager gameManager;
+
+        Dictionary<String, Texture2D> textureDict = new Dictionary<string, Texture2D>();
 
         public Game1()
         {
@@ -47,20 +53,38 @@ namespace monogameShooter
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            font = Content.Load<SpriteFont>("font");
+
             Texture2D playerTexture = Content.Load<Texture2D>("img/character");
             Texture2D floorTexture = Content.Load<Texture2D>("img/ground_tile");
             Texture2D floorTexture1 = Content.Load<Texture2D>("img/ground_tile_1");
             Texture2D floorTexture2 = Content.Load<Texture2D>("img/ground_tile_2");
             Texture2D heartTexture = Content.Load<Texture2D>("img/heart_icon");
             Texture2D gameOverTexture = Content.Load<Texture2D>("img/you_died_screen");
+
+            textureDict.Add("playerTexture", playerTexture);
+            textureDict.Add("floorTexture", floorTexture);
+            textureDict.Add("floorTexture1", floorTexture1);
+            textureDict.Add("floorTexture2", floorTexture2);
+            textureDict.Add("heartTexture", heartTexture);
+            textureDict.Add("gameOverTexture", gameOverTexture);
+
+            startGame();
+        }
+
+        public void startGame()
+        {
+            this.dead = false;
             ballTexture = Content.Load<Texture2D>("img/ball");
 
             ballSpawner = new BallSpawner(64, 5, ballTexture, 1);
-            player = new Player(playerTexture, Vector2.Zero, 3, 30);
-            floor = new Floor(floorTexture, floorTexture1, floorTexture2);
-            gui = new GUI(heartTexture, gameOverTexture);
+            player = new Player(textureDict["playerTexture"], Vector2.Zero, 3, 30);
+            floor = new Floor(textureDict["floorTexture"], textureDict["floorTexture1"], textureDict["floorTexture2"]);
+            gui = new GUI(textureDict["heartTexture"], textureDict["gameOverTexture"]);
+            gameManager = new GameManager(60 * 5, 2);
 
             ballSpawner.CollidedWithPlayer += player => player.damage();
+            player.PlayerDied += () => { this.dead = true; }; // inline lambda useful for short "functions" without the whole thing
         }
 
         protected override void Update(GameTime gameTime)
@@ -69,8 +93,13 @@ namespace monogameShooter
                 Exit();
             KeyboardState ks = Keyboard.GetState();
 
-            player.update(ks);
-            ballSpawner.update(player);
+            if (!dead)
+            {
+                player.update(ks);
+                ballSpawner.update(player);
+                gameManager.update(ballSpawner);
+            }
+            if (ks.IsKeyDown(Keys.Space) && this.dead) startGame();
 
             base.Update(gameTime);
         }
@@ -83,7 +112,7 @@ namespace monogameShooter
             floor.draw(_spriteBatch);
             player.draw(_spriteBatch);
             ballSpawner.draw(_spriteBatch);
-            gui.draw(_spriteBatch, player);
+            gui.draw(_spriteBatch, player, font, dead, gameManager);
 
             _spriteBatch.End();
             base.Draw(gameTime);
