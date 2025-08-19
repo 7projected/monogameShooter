@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 
 
 namespace monogameShooter
@@ -46,7 +47,49 @@ namespace monogameShooter
         {
             spriteBatch.Draw(texture, this.rect, Color.Blue);
         }
+    }
 
+    internal class BallSpawner
+    {
+        private Random rng = new Random();
+        private int ballsAlive;
+        public List<Ball> ballList = new List<Ball>();
+
+        private int ballSize;
+        private int ballSpeed;
+        private Texture2D ballTexture;
+
+        public BallSpawner(int ballSize, int ballSpeed, Texture2D ballTexture, int ballsAlive)
+        {
+            this.ballSize = ballSize;
+            this.ballSpeed = ballSpeed;
+            this.ballTexture = ballTexture;
+            this.ballsAlive = ballsAlive;
+        }
+
+        public void spawn_ball()
+        {
+            int rngX = this.rng.Next(100, 1200);
+            int rngY = this.rng.Next(100, 600);
+            ballList.Add(new Ball(new Vector2(rngX, rngY), this.ballSize, this.rng, this.ballSpeed));
+        }
+
+        public void update()
+        {
+            if (ballList.Count < ballsAlive) spawn_ball();
+            foreach (Ball ball in ballList)
+            {
+                ball.update();
+            }
+        }
+
+        public void draw(SpriteBatch spriteBatch)
+        {
+            foreach (Ball ball in ballList)
+            {
+                ball.draw(spriteBatch, this.ballTexture);
+            }
+        }
 
     }
 }

@@ -3,6 +3,14 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 
+/* TODO:
+ * Player collision with balls
+ * Player dashing
+ * Scoring
+ * Difficulty increasing as score increases
+ * Make ball asteroid cause its on the moon
+*/
+
 namespace monogameShooter
 {
     public class Game1 : Game
@@ -11,9 +19,7 @@ namespace monogameShooter
         private SpriteBatch _spriteBatch;
 
         Texture2D ballTexture;
-        Random ballRandom = new Random();
-        int ballSize = 64;
-        int ballSpeed = 5;
+        BallSpawner ballSpawner;
 
         Player player;
         Floor floor;
@@ -42,13 +48,13 @@ namespace monogameShooter
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            Texture2D playerTexture = Content.Load<Texture2D>("character");
-            Texture2D floorTexture = Content.Load<Texture2D>("ground_tile");
-            Texture2D floorTexture1 = Content.Load<Texture2D>("ground_tile_1");
-            Texture2D floorTexture2 = Content.Load<Texture2D>("ground_tile_2");
-            ballTexture = Content.Load<Texture2D>("ball");
+            Texture2D playerTexture = Content.Load<Texture2D>("img/character");
+            Texture2D floorTexture = Content.Load<Texture2D>("img/ground_tile");
+            Texture2D floorTexture1 = Content.Load<Texture2D>("img/ground_tile_1");
+            Texture2D floorTexture2 = Content.Load<Texture2D>("img/ground_tile_2");
+            ballTexture = Content.Load<Texture2D>("img/ball");
 
-            ball = new Ball(new Vector2(1280 / 2, 720 / 2), ballSize, ballRandom, ballSpeed);
+            ballSpawner = new BallSpawner(64, 5, ballTexture, 3);
             player = new Player(playerTexture, Vector2.Zero);
             floor = new Floor(floorTexture, floorTexture1, floorTexture2);
         }
@@ -60,7 +66,7 @@ namespace monogameShooter
             KeyboardState ks = Keyboard.GetState();
 
             player.update(ks);
-            ball.update();
+            ballSpawner.update();
 
             base.Update(gameTime);
         }
@@ -72,7 +78,7 @@ namespace monogameShooter
 
             floor.draw(_spriteBatch);
             player.draw(_spriteBatch);
-            ball.draw(_spriteBatch, ballTexture);
+            ballSpawner.draw(_spriteBatch);
 
             _spriteBatch.End();
             base.Draw(gameTime);
