@@ -105,7 +105,6 @@ namespace monogameShooter
         {
             if (this.currentIFrames <= 0 && this.currentDashFrame <= 0)
             {
-                Debug.Print(this.health.ToString());
                 this.health -= 1;
                 this.manageHealth();
                 this.currentIFrames = this.maxIFrames;
