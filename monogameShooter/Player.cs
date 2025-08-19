@@ -22,7 +22,7 @@ namespace monogameShooter
         public Player(Texture2D texture, Vector2 position)
         {
             this.sprite = new Sprite(position, texture);
-            this.speed = 10;
+            this.speed = 5;
         }
 
         public void update(KeyboardState ks)

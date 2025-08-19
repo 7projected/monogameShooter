@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace monogameShooter
 {
@@ -9,8 +10,14 @@ namespace monogameShooter
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        Texture2D ballTexture;
+        Random ballRandom = new Random();
+        int ballSize = 64;
+        int ballSpeed = 5;
+
         Player player;
         Floor floor;
+        Ball ball;
 
         public Game1()
         {
@@ -39,6 +46,9 @@ namespace monogameShooter
             Texture2D floorTexture = Content.Load<Texture2D>("ground_tile");
             Texture2D floorTexture1 = Content.Load<Texture2D>("ground_tile_1");
             Texture2D floorTexture2 = Content.Load<Texture2D>("ground_tile_2");
+            ballTexture = Content.Load<Texture2D>("ball");
+
+            ball = new Ball(new Vector2(1280 / 2, 720 / 2), ballSize, ballRandom, ballSpeed);
             player = new Player(playerTexture, Vector2.Zero);
             floor = new Floor(floorTexture, floorTexture1, floorTexture2);
         }
@@ -48,7 +58,9 @@ namespace monogameShooter
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             KeyboardState ks = Keyboard.GetState();
+
             player.update(ks);
+            ball.update();
 
             base.Update(gameTime);
         }
@@ -60,6 +72,7 @@ namespace monogameShooter
 
             floor.draw(_spriteBatch);
             player.draw(_spriteBatch);
+            ball.draw(_spriteBatch, ballTexture);
 
             _spriteBatch.End();
             base.Draw(gameTime);
