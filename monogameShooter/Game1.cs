@@ -20,10 +20,9 @@ namespace monogameShooter
 
         Texture2D ballTexture;
         BallSpawner ballSpawner;
-
+        GUI gui;
         Player player;
         Floor floor;
-        Ball ball;
 
         public Game1()
         {
@@ -52,11 +51,16 @@ namespace monogameShooter
             Texture2D floorTexture = Content.Load<Texture2D>("img/ground_tile");
             Texture2D floorTexture1 = Content.Load<Texture2D>("img/ground_tile_1");
             Texture2D floorTexture2 = Content.Load<Texture2D>("img/ground_tile_2");
+            Texture2D heartTexture = Content.Load<Texture2D>("img/heart_icon");
+            Texture2D gameOverTexture = Content.Load<Texture2D>("img/you_died_screen");
             ballTexture = Content.Load<Texture2D>("img/ball");
 
             ballSpawner = new BallSpawner(64, 5, ballTexture, 1);
-            player = new Player(playerTexture, Vector2.Zero);
+            player = new Player(playerTexture, Vector2.Zero, 3, 30);
             floor = new Floor(floorTexture, floorTexture1, floorTexture2);
+            gui = new GUI(heartTexture, gameOverTexture);
+
+            ballSpawner.CollidedWithPlayer += player => player.damage();
         }
 
         protected override void Update(GameTime gameTime)
@@ -79,6 +83,7 @@ namespace monogameShooter
             floor.draw(_spriteBatch);
             player.draw(_spriteBatch);
             ballSpawner.draw(_spriteBatch);
+            gui.draw(_spriteBatch, player);
 
             _spriteBatch.End();
             base.Draw(gameTime);

@@ -14,7 +14,7 @@ namespace monogameShooter
         private int size;
         private int speed;
         private bool isColl = false;
-        private Rectangle rect
+        public Rectangle rect
         {
             get
             {
@@ -62,6 +62,7 @@ namespace monogameShooter
         private Random rng = new Random();
         private int ballsAlive;
         public List<Ball> ballList = new List<Ball>();
+        public event Action<Player>? CollidedWithPlayer;
 
         private int ballSize;
         private int ballSpeed;
@@ -88,7 +89,7 @@ namespace monogameShooter
             foreach (Ball ball in ballList)
             {
                 if (ball.update(player) == true){
-
+                    CollidedWithPlayer?.Invoke(player);
                 }
             }
         }
