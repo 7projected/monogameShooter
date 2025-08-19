@@ -54,7 +54,7 @@ namespace monogameShooter
             Texture2D floorTexture2 = Content.Load<Texture2D>("img/ground_tile_2");
             ballTexture = Content.Load<Texture2D>("img/ball");
 
-            ballSpawner = new BallSpawner(64, 5, ballTexture, 3);
+            ballSpawner = new BallSpawner(64, 5, ballTexture, 1);
             player = new Player(playerTexture, Vector2.Zero);
             floor = new Floor(floorTexture, floorTexture1, floorTexture2);
         }
@@ -66,7 +66,7 @@ namespace monogameShooter
             KeyboardState ks = Keyboard.GetState();
 
             player.update(ks);
-            ballSpawner.update();
+            ballSpawner.update(player);
 
             base.Update(gameTime);
         }

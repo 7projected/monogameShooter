@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 
 namespace monogameShooter
@@ -12,6 +13,7 @@ namespace monogameShooter
         private Vector2 velocity;
         private int size;
         private int speed;
+        private bool isColl = false;
         private Rectangle rect
         {
             get
@@ -30,7 +32,7 @@ namespace monogameShooter
             while (this.velocity.Y == 0) this.velocity.Y = rnd.Next(1, 4) - 2;
         }
 
-        public void update()
+        public bool update(Player player)
         {
             Rectangle nextRect = new Rectangle((int)rect.X + ((int)this.velocity.X * this.speed),
                                                (int)rect.Y + ((int)this.velocity.Y * this.speed),
@@ -41,11 +43,17 @@ namespace monogameShooter
 
             this.center.X += this.velocity.X * this.speed;
             this.center.Y += this.velocity.Y * this.speed;
+
+            // Check collision with every ball and player each Update Frame
+            return player.rect.Intersects(this.rect);
         }
 
         public void draw(SpriteBatch spriteBatch, Texture2D texture)
         {
-            spriteBatch.Draw(texture, this.rect, Color.Blue);
+            Color col = Color.White;
+            if (this.isColl) col = Color.Red;
+
+            spriteBatch.Draw(texture, this.rect, col);
         }
     }
 
@@ -74,12 +82,14 @@ namespace monogameShooter
             ballList.Add(new Ball(new Vector2(rngX, rngY), this.ballSize, this.rng, this.ballSpeed));
         }
 
-        public void update()
+        public void update(Player player)
         {
             if (ballList.Count < ballsAlive) spawn_ball();
             foreach (Ball ball in ballList)
             {
-                ball.update();
+                if (ball.update(player) == true){
+
+                }
             }
         }
 
